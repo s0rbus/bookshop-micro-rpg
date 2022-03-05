@@ -14,4 +14,4 @@ jobs:
         goos: linux
         goarch: amd64
         extra_files: README.md bin
-        build_command: make all dist
+        build_command: make all

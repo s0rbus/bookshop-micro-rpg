@@ -25,13 +25,14 @@ $(ESO): $(ESRC)
 	@./build-expansions.sh
 
 all: bin/$(BINARY) $(ESO)
+	@./make-dist.sh
 
 expansions: $(ESO)
 
-dist: $(ESO)
-	@./make-dist.sh
+#dist: $(ESO)
+#	@./make-dist.sh
 
-.PHONY: clean dist
+.PHONY: clean
 
 clean: 
 	@rm -rf bin
