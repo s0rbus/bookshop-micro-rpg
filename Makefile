@@ -1,9 +1,8 @@
-NAME=$(shell basename $(CURDIR))
 
 SHELL=/bin/bash
 
-# The name of the executable (default is current directory name)
-BINARY := $(NAME)
+# The name of the executable
+BINARY := bookshop-micro-rpg
 ROOT := $(shell git rev-parse --show-toplevel)
 #Extract version number from CHANGELOG file. have to escape '#' otherwise make sees it as comment
 VERSION := $(shell sed -n 's/^\#\# \[\([0-9]\.[0-9]\.[0-9].*\)\].*/\1/p' ${ROOT}/CHANGELOG.md | head -1)
