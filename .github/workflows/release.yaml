@@ -13,5 +13,6 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: linux
         goarch: amd64
-        extra_files: README.md expansions
-        pre_command: "./build_plugins.sh"
+        extra_files: README.md bin
+        build_command: make all
+        post_command: make dist

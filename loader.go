@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"plugin"
 
-	"bookshop-rpg/api"
+	"github.com/s0rbus/bookshop-micro-rpg/api"
 )
 
 var p *plugin.Plugin

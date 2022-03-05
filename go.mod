@@ -1,4 +1,4 @@
-module bookshop-rpg
+module github.com/s0rbus/bookshop-micro-rpg
 
 go 1.17
 

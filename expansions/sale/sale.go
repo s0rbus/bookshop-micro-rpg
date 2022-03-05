@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bookshop-rpg/api"
+	"github.com/s0rbus/bookshop-micro-rpg/api"
 	"fmt"
 )
 

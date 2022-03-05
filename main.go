@@ -6,10 +6,17 @@ import (
 	"os"
 	"time"
 
-	"bookshop-rpg/api"
+	"github.com/s0rbus/bookshop-micro-rpg/api"
 
 	"github.com/alecthomas/kong"
 	"github.com/guptarohit/asciigraph"
+)
+
+//Build variables
+var (
+	version    = "undefined"
+	githash    = "undefined"
+	buildstamp = "undefined"
 )
 
 var cli struct {
@@ -21,6 +28,7 @@ var cli struct {
 	Plot         bool   `help:"use asciigraph to plot money history for each attempt"`
 	PluginDir    string `help:"folder containing expansion plugins"`
 	Expansion    string `help:"name of expansion to use"`
+	Version      bool   `help:"Show version and build info and exit" default:"false"`
 }
 
 var eventMaps []map[int][]api.Action
@@ -33,6 +41,12 @@ type Event struct {
 	EventType string
 	Timestamp time.Time
 	Score     int
+}
+
+func versionInfo() {
+	fmt.Fprintf(os.Stderr, "App version: %v\n", version)
+	fmt.Fprintf(os.Stderr, "Git commit: %v\n", githash)
+	fmt.Fprintf(os.Stderr, "Build time: %v\n", buildstamp)
 }
 
 func setup() {
@@ -208,8 +222,12 @@ func Run(na int, pause int, plot bool, fp bool, mon bool, exp api.Expansion) err
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	kong.Parse(&cli,
-		kong.Name("bookshop-rpg"),
+		kong.Name("bookshop-micro-rpg"),
 		kong.Description("Based on a description by Oliver Darkshire"))
+	if cli.Version {
+		versionInfo()
+		os.Exit(0)
+	}
 	verbose = cli.Verbose
 	var exp api.Expansion
 	var err error
