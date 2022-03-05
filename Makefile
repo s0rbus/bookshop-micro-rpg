@@ -10,7 +10,7 @@ BUILDTS := $(shell date '+%Y%m%d_%H:%M:%S')
 GITHASH := $(shell git rev-parse --short HEAD)
 GITSTATUS := "$(GITHASH)$(shell git diff --quiet || echo '-dirty')"
 SRC := $(wildcard *.go)
-subdirs := $(wildcard expansions/*/)
+subdirs := $(wildcard expansion-src/*/)
 ESRC := $(wildcard $(addsuffix *.go,$(subdirs)))
 ESO := $(patsubst %.go,%.so,$(ESRC))
 
@@ -36,6 +36,6 @@ expansions: $(ESO)
 clean: 
 	@rm -rf dist
 	@rm -f $(BINARY)
-	@$(shell find expansions -name '*.so' -exec rm {} \;)
+	@$(shell find expansion-src -name '*.so' -exec rm {} \;)
 
 

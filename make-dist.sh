@@ -1,5 +1,4 @@
 #!/bin/bash
 
-mkdir -p dist/expansions
-find expansions -name '*.so' -exec cp {} dist/expansions/ \;
-cp bookshop-micro-rpg dist/
+mkdir -p expansions
+find expansion-src -name '*.so' -exec cp {} expansions/ \;
