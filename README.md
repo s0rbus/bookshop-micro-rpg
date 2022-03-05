@@ -79,6 +79,9 @@ This tells the application to look for and load the plugin file sale.so which ca
 
 This example is a 'sales' expansion. When a sale is started as a result of a dice throw, money decreases by 5 and patience by 1, but thereafter, while the sale is still 'on', sales of books are more likely to occur (50/50)
 
+## Building
+make is used for building so the make tool is a requirement. The default target will just build the application. Use ```make all``` to also build expansion libraries in the expansions folder. Using make to build the application will also ensure that build info (version, git hash and built timestamp) are added to the application. These can be displayed by using ```--version``` flag.
+
 ## Licence
 The default position when a licence is not provided, according to [github documentation](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository#choosing-the-right-license) is:
 ```
