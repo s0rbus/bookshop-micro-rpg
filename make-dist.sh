@@ -1,4 +1,5 @@
 #!/bin/bash
 
-mkdir -p bin/expansions
-find expansions -name '*.so' -exec cp {} bin/expansions/ \;
+mkdir -p dist/expansions
+find expansions -name '*.so' -exec cp {} dist/expansions/ \;
+cp $(basename `pwd`) dist/

@@ -18,13 +18,13 @@ ESO := $(patsubst %.go,%.so,$(ESRC))
 #Note, when not using main package for variable setting using LDFLAGS, have to provide full package path, not just package name
 LDFLAGS=-ldflags="-X main.version=$(VERSION) -X main.buildstamp=$(BUILDTS) -X main.githash=$(GITSTATUS)"
 
-bin/$(BINARY): $(SRC) ${ROOT}/CHANGELOG.md
-	@go build -trimpath -o bin/$(BINARY) $(LDFLAGS) $(SRC)
+$(BINARY): $(SRC) ${ROOT}/CHANGELOG.md
+	@go build -trimpath -o $(BINARY) $(LDFLAGS) $(SRC)
 
 $(ESO): $(ESRC)
 	@./build-expansions.sh
 
-all: bin/$(BINARY) $(ESO)
+all: $(BINARY) $(ESO)
 	@./make-dist.sh
 
 expansions: $(ESO)
@@ -35,7 +35,8 @@ expansions: $(ESO)
 .PHONY: clean
 
 clean: 
-	@rm -rf bin
+	@rm -rf dist
+	@rm -f $(BINARY)
 	@$(shell find expansions -name '*.so' -exec rm {} \;)
 
 

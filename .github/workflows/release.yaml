@@ -13,5 +13,5 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: linux
         goarch: amd64
-        extra_files: README.md bin
+        extra_files: README.md dist
         build_command: make all
