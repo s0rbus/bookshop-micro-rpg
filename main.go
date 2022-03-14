@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"os"
@@ -105,7 +106,7 @@ func getActions(r1, r2 int) []api.Action {
 	return a
 }
 
-func Run(na int, pause int, plot bool, fp bool, mon bool, exp api.Expansion) error {
+func Run(na int, pause int, plot bool, fp bool, mon bool, exp api.ExpansionStruct) error {
 	moneyData := make([][]int, na)
 	llperiod := 10
 	rent := 10
@@ -134,19 +135,26 @@ func Run(na int, pause int, plot bool, fp bool, mon bool, exp api.Expansion) err
 				eventRoll1 := rand.Intn(6) + 1
 				eventRoll2 := rand.Intn(6) + 1
 				actions := getActions(eventRoll1, eventRoll2)
-				if exp != nil {
+				if exp.Name != nil {
 					numThrows := exp.GetRequiredThrows()
 					expRows := make([]int, numThrows)
 					for i := 0; i < numThrows; i++ {
 						expRows[i] = rand.Intn(6) + 1
 					}
-					expActions, err := exp.Run(day, expRows...)
+					expActions, err := exp.Run(day, expRows)
 					if err != nil {
 						fmt.Printf("Error running expansion %s: %v\n", exp.Name(), err)
 					} else {
-						actions = append(actions, expActions...)
+						for _, a := range expActions {
+							action := api.Action{}
+							err := json.Unmarshal([]byte(a), &action)
+							if err != nil {
+								fmt.Printf("error unmarshalling action")
+							} else {
+								actions = append(actions, action)
+							}
+						}
 					}
-
 				}
 				for _, a := range actions {
 					if verbose {
@@ -229,10 +237,17 @@ func main() {
 		os.Exit(0)
 	}
 	verbose = cli.Verbose
-	var exp api.Expansion
+	var exp api.ExpansionStruct
 	var err error
-	if cli.PluginDir != "" && cli.Expansion != "" {
+	/* if cli.PluginDir != "" && cli.Expansion != "" {
 		exp, err = LoadPlugins(cli.PluginDir, cli.Expansion)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	} */
+	if cli.PluginDir != "" && cli.Expansion != "" {
+		exp, err = LoadExpansion(cli.PluginDir, cli.Expansion)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
