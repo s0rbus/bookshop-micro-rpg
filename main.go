@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/s0rbus/bookshop-micro-rpg/api"
@@ -30,6 +31,7 @@ var cli struct {
 	PluginDir    string `help:"folder containing expansion plugins"`
 	Expansion    string `help:"name of expansion to use"`
 	Version      bool   `help:"Show version and build info and exit" default:"false"`
+	Json         bool   `help:"If not verbose/plotting, output status in json. Ignored if verbose or plot are true" default:"false"`
 }
 
 var eventMaps []map[int][]api.Action
@@ -110,6 +112,7 @@ func Run(na int, pause int, plot bool, fp bool, mon bool, exp api.ExpansionStruc
 	moneyData := make([][]int, na)
 	llperiod := 10
 	rent := 10
+	jsonout := cli.Json && !verbose && !plot
 	if mon {
 		llperiod = 30
 		rent = 30
@@ -118,7 +121,11 @@ func Run(na int, pause int, plot bool, fp bool, mon bool, exp api.ExpansionStruc
 		moneyData[i] = make([]int, 0)
 	}
 	for attempt := 1; attempt <= na; attempt++ {
-		fmt.Printf("Attempt %d ", attempt)
+		if jsonout {
+			fmt.Printf(`{"attempt":%d,`, attempt)
+		} else {
+			fmt.Printf("Attempt %d ", attempt)
+		}
 		setup()
 		patienceStart := 10
 		viable := true
@@ -143,13 +150,21 @@ func Run(na int, pause int, plot bool, fp bool, mon bool, exp api.ExpansionStruc
 					}
 					expActions, err := exp.Run(day, expRows)
 					if err != nil {
-						fmt.Printf("Error running expansion %s: %v\n", exp.Name(), err)
+						if jsonout {
+							fmt.Printf(`"error":"Error running expansion %s: %v",`, exp.Name(), err)
+						} else {
+							fmt.Printf("Error running expansion %s: %v\n", exp.Name(), err)
+						}
 					} else {
 						for _, a := range expActions {
 							action := api.Action{}
 							err := json.Unmarshal([]byte(a), &action)
 							if err != nil {
-								fmt.Printf("error unmarshalling action")
+								if jsonout {
+									fmt.Printf(`"error" : "error unmarshalling action"`)
+								} else {
+									fmt.Printf("error unmarshalling action")
+								}
 							} else {
 								actions = append(actions, action)
 							}
@@ -203,14 +218,28 @@ func Run(na int, pause int, plot bool, fp bool, mon bool, exp api.ExpansionStruc
 		if day > 365 {
 			t = fmt.Sprintf("%v years, %d days", day/365, day%365)
 		}
-		fmt.Printf("The shop is no longer viable. You survived for %v, but now the business is closing for good. Your maximum amount of money was %d and you were left with %d\n", t, maxMoney, moneyData[attempt-1][len(moneyData[attempt-1])-1])
+		if jsonout {
+			fmt.Printf(`"status" : {"message" : "The shop is no longer viable.", "days_survived" : %v, "max_money" : %d, "money_left" : %d},`, day, maxMoney, moneyData[attempt-1][len(moneyData[attempt-1])-1])
+		} else {
+			fmt.Printf("The shop is no longer viable. You survived for %v, but now the business is closing for good. Your maximum amount of money was %d and you were left with %d\n", t, maxMoney, moneyData[attempt-1][len(moneyData[attempt-1])-1])
+		}
 		copy := moneyData[attempt-1]
 		sfx := ""
 		if len(copy) > 50 {
 			copy = copy[:50]
 			sfx = " (snipped)"
 		}
-		fmt.Printf("Attempt %d money: %v%s\n", attempt, copy, sfx)
+		if jsonout {
+			s := fmt.Sprintf("%v", copy)
+			s = strings.ReplaceAll(s, " ", ",")
+			fmt.Printf(`"money" : %v`, s)
+			if sfx != "" {
+				fmt.Print(`, "truncated" : true`)
+			}
+			fmt.Println("}")
+		} else {
+			fmt.Printf("Attempt %d money: %v%s\n", attempt, copy, sfx)
+		}
 		if plot {
 
 			fd := make([]float64, len(copy))
@@ -239,13 +268,6 @@ func main() {
 	verbose = cli.Verbose
 	var exp api.ExpansionStruct
 	var err error
-	/* if cli.PluginDir != "" && cli.Expansion != "" {
-		exp, err = LoadPlugins(cli.PluginDir, cli.Expansion)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-	} */
 	if cli.PluginDir != "" && cli.Expansion != "" {
 		exp, err = LoadExpansion(cli.PluginDir, cli.Expansion)
 		if err != nil {

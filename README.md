@@ -65,19 +65,21 @@ Attempt 3 money: [3 5 6 7 8 9 9 9 9 0 -1 -1 -1 -1 -1 -1 -1 0 0 0]
  ```
 ````
 
+## JSON output
+The output from the applciation can be formatted as JSON using the --json option. This is ignored if either --verbose or --plot are used. The idea is that the JSON output provides structured data which can be further extracted and analyzed. This would be more difficult with the standard, non-structured output.
+
 ## Expansions
 
-A simple 'game expansion' system is included which is implemented using Go's plugin system for Go version 1.8 and above. Using existing plugins is fairly straightforward, but developing new expansions (plugins) requires experience in the Go language and use of the [plugin package](https://pkg.go.dev/plugin).
-
-Two options are available to specify and load an expansion. For example to load and use the example expansion which is included in this repository use:
-
+As of version 2.0.0 and above, the expansion system uses Javascript files which are run using an embedded Javascript engine. This makes it easier for people not familiar with Go to add expansions. The same options are used to find and load expansions except that --expansion should now take a javascript filename, so for example to use the sale expansion:
 ```bash
---plugin-dir=expansions/sale --expansion=sale
+--plugin-dir=expansions --expansion=sale.js
 ```
 
-This tells the application to look for and load the plugin file sale.so which can be found in the folder expansions/sale.
+This tells the application to look for and load the plugin file sale.js which can be found in the folder expansions.
 
 This example is a 'sales' expansion. When a sale is started as a result of a dice throw, money decreases by 5 and patience by 1, but thereafter, while the sale is still 'on', sales of books are more likely to occur (50/50)
+
+There is another simple example included in the repository for a 'coffee shop' within the bookshop.
 
 ## Building
 make is used for building so the make tool is a requirement. The default target will just build the application. Use ```make all``` to also build expansion libraries in the expansions folder. Using make to build the application will also ensure that build info (version, git hash and built timestamp) are added to the application. These can be displayed by using ```--version``` flag.
