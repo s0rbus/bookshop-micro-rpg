@@ -12,7 +12,7 @@ GITSTATUS := "$(GITHASH)$(shell git diff --quiet || echo '-dirty')"
 SRC := $(wildcard *.go)
 ARCH=amd64
 LINUX=$(BINARY)-linux-$(ARCH)
-WINDOWS=$(BINARY)-windows-$(ARCH).exe
+WINDOWS=$(BINARY)-windows-$(ARCH)
 DARWIN=$(BINARY)-darwin-$(ARCH)
 
 #Note, when not using main package for variable setting using LDFLAGS, have to provide full package path, not just package name

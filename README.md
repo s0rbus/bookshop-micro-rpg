@@ -21,7 +21,7 @@ or download binaries from the releases page.
 
 To see usage message with the various options explained run:
 ```bash
-./bookshop-micro-rpg --help
+./bookshop-micro-rpg-<os>-<arch> --help
 ```
 Without specifying any options, the defaults will be used which will run three simulations (attempts) using the basic '10 day' rule and not using any expansions.
 
