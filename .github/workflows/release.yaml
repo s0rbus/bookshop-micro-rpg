@@ -10,7 +10,6 @@ jobs:
       matrix:
         goos: [linux, windows, darwin]
         goarch: [amd64]
-        ext: ["", ".exe", ""]
     steps:
     - uses: actions/checkout@v2
     - uses: wangyoucao577/go-release-action@v1.25
@@ -20,4 +19,4 @@ jobs:
         goarch: ${{ matrix.goarch }}
         extra_files: README.md CHANGELOG.md expansions
         build_command: make ${{ matrix.goos }}
-        binary_name: "bookshop-micro-rpg-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }}"
+        binary_name: "bookshop-micro-rpg-${{ matrix.goos }}-${{ matrix.goarch }}"
